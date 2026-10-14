@@ -1,0 +1,16 @@
+{
+  "input": "data/input/photo.jpg",
+  "seed": 0,
+  "gaussian_noise_sigma": 25.0,
+  "salt_pepper_probability": 0.10,
+  "kernel_size": 5,
+  "gaussian_sigma": 1.5,
+  "laplacian_amount": 0.8,
+  "usm_amount": 0.6,
+  "usm_sigma": 2.0,
+  "bilateral_d": 7,
+  "sigma_color": 50.0,
+  "sigma_space": 5.0,
+  "pipeline_filter": "gaussian",
+  "pipeline_sharpen": "usm"
+}

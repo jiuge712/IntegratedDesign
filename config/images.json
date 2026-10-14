@@ -1,0 +1,10 @@
+{
+  "color": "data/input/color.png",
+  "gray": "data/input/gray.png",
+  "rgba": "data/input/rgba.png",
+  "different_size": "data/input/different_size.png",
+  "large": "data/input/large.png",
+  "jpeg": "data/input/photo.jpg",
+  "black": "data/input/black.png",
+  "white": "data/input/white.png"
+}

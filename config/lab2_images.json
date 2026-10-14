@@ -1,0 +1,13 @@
+{
+  "normal": "data/input/photo.jpg",
+  "dark": null,
+  "low_contrast": null,
+  "dark_factor": 0.45,
+  "low_contrast_scale": 0.3,
+  "low_contrast_offset": 80,
+  "alpha": 1.5,
+  "beta": 30,
+  "gamma_bright": 2.2,
+  "gamma_dark": 0.5,
+  "blend_weight": 0.6
+}
