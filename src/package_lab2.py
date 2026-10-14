@@ -10,6 +10,8 @@ def build_package(experiment=2) -> int:
     files = [ROOT / "README.md", ROOT / "requirements.txt", ROOT / ".gitignore"]
     if (ROOT / "AGENTS.md").is_file():
         files.append(ROOT / "AGENTS.md")
+    if (ROOT / "pytest.ini").is_file():
+        files.append(ROOT / "pytest.ini")
     for folder, pattern in (("src","*.py"),("config","*.json"),("docs","*.md")):
         files.extend(sorted((ROOT / folder).glob(pattern)))
     buffer = io.BytesIO()

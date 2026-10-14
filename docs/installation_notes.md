@@ -11,9 +11,10 @@
 5. 首次实际运行 `src/run_tests.py --self-test`，21 项代码验证通过。当时尚缺个人图片，默认正式测试能明确报告缺少的文件并返回 1。
 6. 用户提供源图及黑白图后，使用新增的素材准备脚本导出实验版本并更新配置，正式执行 17 项个人图片测试，全部通过。原图、已有黑白图及测试输入哈希均保持不变。
 7. 实验三新增 scikit-image 用于 SSIM。沙箱内首次安装受访问限制，授权后在同一虚拟环境安装 scikit-image 0.26.0 及其传递依赖；更新 requirements.txt 并通过 pip check。实验三22项自检、9项个人运行检查通过。
+8. 实验五新增pytest 9.1.1及colorama/iniconfig/pluggy/pygments；沙箱内首次下载失败，获得安装授权后在同一.venv安装。requirements.txt及environment.md已更新。全项目107项pytest用例及15项unittest子用例通过，实验五14项正式检查通过。
 
 ## 本机提示
 
-解释器会在 stderr 打印 `Failed to find real location of D:\Python\python.exe`。当前虚拟环境版本检查、依赖导入、图像处理和自检均成功；该路径定位提示没有改变这些命令的成功退出码。保留提示在实际用例日志中，不隐藏或伪造运行结果。
+实验一早期解释器曾在stderr打印`Failed to find real location of D:\Python\python.exe`；当时版本检查、依赖导入和处理仍成功，提示保留在原日志中。实验五当前实测命令没有再出现该提示。跨机器根据实际环境处理，不隐藏或伪造运行结果。
 
 其他机器复现时应按 reproduction.md 重新创建环境，环境或网络异常按实际情况处理，不把本机沙箱现象当作所有 Windows 环境必然发生的问题。

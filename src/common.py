@@ -8,7 +8,7 @@ from pathlib import Path
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "4.0.0"
+VERSION = "5.0.0"
 INPUT_ROOT = ROOT / "data" / "input"
 
 

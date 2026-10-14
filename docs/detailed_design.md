@@ -69,3 +69,7 @@ run_lab4.py 的source_path/load_gray负责路径与uint8/最短边校验；run�
 主要图、阈值/密度CSV与原始梯度NPZ分别服务视觉观察、数值复查和精度复核。报告中的白色比例不充当语义分割准确率；手写/API边缘IoU仅表述实现一致性。
 
 验证：test_lab3.py的22项和test_lab4.py的28项数值/边界/命令行测试；实际个人运行另保存检查。真实小组走查记录见design_walkthrough.md，尚需参与者实际填写。
+
+## 实验五角点与尺度空间
+
+新增feature.py与lab5_scale.py的函数签名、输入/输出、数学、边界、异常和测试详见[实验五设计](lab5_design.md)。run_lab5.py复用common与LatestRun，执行pytest后验证原始响应/DoG、坐标、金字塔尺寸、PNG/NPZ回读及输入哈希，再发布lab5_latest。prepare_chess.py只用于明确授权的输入准备，拒绝覆盖已有不同棋盘。课堂互查/小组规范确认仍需真实参与者完成，不因新增技术设计而自动勾选user_tasks.md。

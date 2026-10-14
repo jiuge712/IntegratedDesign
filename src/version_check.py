@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse
 import json
+from importlib.metadata import version, PackageNotFoundError
 from pathlib import Path
 import platform
 import subprocess
@@ -16,6 +17,10 @@ from common import ROOT, VERSION, timestamp, write_text
 
 
 def environment() -> dict:
+    try:
+        pytest_version = version('pytest')
+    except PackageNotFoundError:
+        pytest_version = 'not installed'
     return {
         "recorded_at": timestamp(), "program_version": VERSION,
         "platform": platform.platform(), "machine": platform.machine(),
@@ -23,6 +28,7 @@ def environment() -> dict:
         "in_virtual_environment": sys.prefix != sys.base_prefix,
         "opencv": cv2.__version__, "numpy": np.__version__, "matplotlib": matplotlib.__version__,
         "scikit_image": skimage.__version__,
+        "pytest": pytest_version,
     }
 
 
