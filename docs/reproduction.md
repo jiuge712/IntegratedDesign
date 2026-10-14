@@ -1,8 +1,8 @@
 # 各实验统一复现指南
 
-本文件是固定的复现入口，目前覆盖实验一至四。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md。
+本文件是固定的复现入口，目前覆盖实验一至五。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。
 
-图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
+图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。实验五棋盘已获你明确授权由程序绘制，作为正式素材并记录来源。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
 
 ## 共同环境与安装
 
@@ -20,7 +20,7 @@ py -3.14 -m venv .venv
 .\.venv\Scripts\python.exe -X utf8 src/version_check.py
 ```
 
-本次实测 Windows 11 AMD64、Python 3.14.7，具体库版本见 environment.md 与 requirements.txt。依赖为 OpenCV、NumPy、Matplotlib，以及实验三新增的 scikit-image 和传递依赖。旧环境也应执行 pip install -r requirements.txt。不要复制其他机器的 .venv；WindowsApps 占位 python 不能启动时使用 py 或真实解释器路径。
+本次实测 Windows 11 AMD64、Python 3.14.7，具体库版本见 environment.md 与 requirements.txt。依赖为 OpenCV、NumPy、Matplotlib，实验三新增scikit-image，实验五新增pytest 9.1.1及传递依赖。旧环境也应执行 pip install -r requirements.txt。不要复制其他机器的 .venv；WindowsApps 占位 python 不能启动时使用 py 或真实解释器路径。
 
 普通复现保留锁定版本。主动升级依赖才用 version_check.py --freeze requirements.txt 更新记录。离线安装可先在同平台同 Python 联网机器下载 wheels，再复制到离线机：
 
@@ -37,8 +37,9 @@ py -3.14 -m venv .venv
 | 二 基本运算与均衡化 | config/lab2_images.json | src/run_lab2.py | docs/lab2_report.md | data/output/lab2_latest |
 | 三 空间滤波与增强 | config/lab3_images.json | src/run_lab3.py | docs/lab3_report.md | data/output/lab3_latest |
 | 四 边缘与阈值分割 | config/lab4_images.json | src/run_lab4.py | docs/lab4_report.md | data/output/lab4_latest |
+| 五 角点与尺度空间 | config/lab5_images.json | src/run_lab5.py | docs/lab5_report.md | data/output/lab5_latest |
 
-对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至四的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。
+对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至五的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。
 
 ## 实验一复现
 
@@ -149,15 +150,52 @@ Otsu实际阈值打印在控制台并写入报告。自适应blockSize默认31�
 
 detailed_design.md覆盖L3/L4函数设计，coding_standards.md为技术编码规范，design_walkthrough.md有已验证的技术意见及真实两两走查空位。按user_tasks.md亲自完成课堂交换走查、组内规范确认；若要求实拍或截图再补对应材料。完成真实记录后重新package_lab4.py，避免ZIP中还是旧文档。
 
+## 实验五复现
+
+本次已授权的棋盘为data/input/chess.png，8×8格、每格40像素、320×320、灰度uint8，49个内部交点；不是实拍照片。texture沿用你的photo.jpg做补充检测器对照。源码ZIP不带输入；在新机器上可重新生成已授权棋盘，再放入自己的纹理图片，或将配置texture设为null：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/prepare_chess.py
+.\.venv\Scripts\python.exe -X utf8 -m pytest -v src/test_feature.py src/test_lab5_scale.py
+.\.venv\Scripts\python.exe -X utf8 src/run_lab5.py
+$LASTEXITCODE
+.\.venv\Scripts\python.exe -X utf8 src/package_lab5.py
+```
+
+prepare_chess.py只新建棋盘；已有不同内容会拒绝覆盖，防止改掉你的替换素材。默认棋盘相同则复用，来源写入evidence/chess_source.json。已经有自己的棋盘时跳过该准备命令。
+
+实验五独立35项pytest用例应通过。主入口自动执行全项目pytest，本次107项用例及15项unittest子用例通过，无失败/错误/跳过；其中二至四回归72项、五35项。JUnit的tests=122包含子用例，不能误写成122项独立主用例。正式运行14项检查，默认27张PNG；texture=null时省略纹理对照，26张。日志和JUnit保存在evidence/lab5_latest，程序生成的图片/文本不冒充真实终端截图。
+
+Harris的k固定对比0.04/0.06/0.1，block_size=2、sobel_ksize=3；quality_level=0.01是相对各自最大正R的阈值，min_distance=10为当前图像像素，max_harris_corners=500。Shi-Tomasi最多100个，FAST阈值20并启用非极大值抑制。可改质量阈值、间距、上限和核等字段；正式配置保留指导书三组k与四层金字塔。不接受未知键。
+
+当前三组Harris和Shi-Tomasi各49点；FAST在理想二值棋盘为0，在个人插画为1635点，属于检测条件差异。本例三组相对阈值下角点数相同，应保留真实结果。响应R、λ1/λ2及手写/API差异见报告；坐标为(x,y)整数、数组访问[y,x]。手写/API相关系数本次1.0；恒定图用null表示相关系数无定义。
+
+四层尺寸320×320、160×160、80×80、40×40，奇数尺寸使用ceil(n/2)。相邻层先把粗层float32放大到细层，再计算coarse_up−fine：保留负值，不使用uint8饱和减法。候选是|DoG|空间局部峰，质量0.1、间距6、最多max_dog_candidates=150；达到上限时不是实际极值总数。raw_arrays.npz保存带符号值，PNG只是显示。
+
+另有同尺寸Gaussian DoG补充：初始sigma=1.6、scale_ratio=2^(1/3)，6个sigma形成5层差分；中间3层与26邻点严格比较，contrast_threshold=2，排除边界和等值平台。未实现完整SIFT，不据此证明尺度不变性。详细数学、接口和测试见lab5_design.md。
+
+更换棋盘或补充纹理图，无需改源码：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab5.py --chess "data/input/我的棋盘.png"
+.\.venv\Scripts\python.exe -X utf8 src/run_lab5.py --chess "data/input/我的棋盘.jpg" --texture "data/input/新纹理图.jpg"
+```
+
+或修改config/lab5_images.json的chess/texture；设置texture=null可单独做棋盘必做项。每次按新文件哈希确认来源，不会把换后的图仍写为生成的8×8棋盘。原始输入保持不变；全套校验后才替换lab5_latest，失败保留前次完整结果。重复运行也会替换该证据目录中的手工截图，应在最后一次运行后补截图并备份提交材料。
+
+主要图：l5_harris_compare.png、l5_detector_compare.png、l5_lambda_plane.png、l5_manual_compare.png、l5_pyramid_compare.png、l5_dog_compare.png及l5_gaussian_dog_compare.png。检测坐标/尺度候选在coordinates.json，统计metrics.csv，原始数组raw_arrays.npz（np.load(...,allow_pickle=False)），输入与参数results.json，图像哈希manifest.json。
+
+Git流程、目标远程及真实提交/推送记录见lab5_git_workflow.md与evidence/lab5_git.log；本机使用已补齐HTTPS助手的便携MinGit，命令见Git文档，其他机器可安装完整Git for Windows。按user_tasks.md亲自复现、截取pytest成功画面、核对远程提交/个人推送证据并最终提交。修改课堂记录后重新package_lab5.py，ZIP包含pytest.ini、源码/配置/全部Markdown，图片和证据另交。
+
 ## 同一新图片用于各实验
 
-四个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture或同步改对应JSON；四的真实光照不均图单独用--uneven指定。无需改源码。
+五个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture或同步改对应JSON；四的真实光照不均图用--uneven指定，五的棋盘另用--chess指定。纹理图不能自动代替棋盘必需素材。无需改源码。
 
 JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空格、中文路径用双引号。保持对应角色的格式、通道和尺寸要求即可重复替换。
 
 ## 输出保留、排错与提交
 
-各实验只留lab1_latest至lab4_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图与派生输入保留，其他实验最新结果不受影响。自动数组自检独立记录。
+各实验只留lab1_latest至lab5_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图与派生输入保留，其他实验最新结果不受影响。自动数组自检独立记录。
 
 | 现象 | 处理 |
 | --- | --- |
@@ -168,6 +206,9 @@ JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空
 | 16位在二至四报错 | 提供uint8，一的支持不代表后续API均支持 |
 | 四的全局阈值与Otsu图相同 | 检查返回阈值，本次确实同为128，不是程序异常 |
 | 四的自适应图纹理较多/大面积白色 | 调整blockSize/C，结合局部细节观察；没有真值标签不报告准确率 |
+| 五的FAST在理想棋盘为0 | 属于圆周比较的条件差异，查看个人纹理对照，不强造角点 |
+| pytest导入失败或找不到feature | 安装requirements.txt；从project_i根目录用python -m pytest，保留pytest.ini |
+| 生成棋盘提示文件已存在且不同 | 不覆盖你的素材；跳过prepare_chess.py，直接指定你的棋盘运行 |
 | 核/sigma 不合法 | 核≥3奇整数，sigma 有限正数 |
 | 锐化过冲/黑边 | 降低系数，结合局部图观察 |
 | 运行锁存在 | 确认无同实验进程；中断残留时才移除对应 .labN_running.lock |

@@ -4,8 +4,8 @@
 
 | 项目 | 实际值 |
 | --- | --- |
-| recorded_at | 2026-10-14T20:20:54+08:00 |
-| program_version | 4.0.0 |
+| recorded_at | 2026-10-14T21:00:30+08:00 |
+| program_version | 5.0.0 |
 | platform | Windows-11-10.0.26200-SP0 |
 | machine | AMD64 |
 | python | 3.14.7 |
@@ -15,6 +15,7 @@
 | numpy | 2.5.4 |
 | matplotlib | 3.11.2 |
 | scikit_image | 0.26.0 |
+| pytest | 9.1.1 |
 
 耗时仅适用于记录的平台；跨机器复现时以重新采集的记录为准。
 
