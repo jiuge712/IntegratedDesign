@@ -187,6 +187,8 @@ Harris的k固定对比0.04/0.06/0.1，block_size=2、sobel_ksize=3；quality_lev
 
 Git流程、目标远程及真实提交/推送记录见lab5_git_workflow.md与evidence/lab5_git.log；本机使用已补齐HTTPS助手的便携MinGit，命令见Git文档，其他机器可安装完整Git for Windows。按user_tasks.md亲自复现、截取pytest成功画面、核对远程提交/个人推送证据并最终提交。修改课堂记录后重新package_lab5.py，ZIP包含pytest.ini、源码/配置/全部Markdown，图片和证据另交。
 
+本次代理已实际推送main及feature/l5-corner并核验远程SHA；9项集成检查验证换图、中文/空格路径、奇数尺寸、texture=null清除旧输出、失败保留、原图/其他实验不变，记录为evidence/lab5_latest/replacement_verification.json。个人复现/截图/提交状态仍须你明确告知后更新。
+
 ## 同一新图片用于各实验
 
 五个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture或同步改对应JSON；四的真实光照不均图用--uneven指定，五的棋盘另用--chess指定。纹理图不能自动代替棋盘必需素材。无需改源码。

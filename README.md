@@ -8,6 +8,8 @@
 
 实验五入口为src/run_lab5.py；[实验五报告](docs/lab5_report.md)、[算法与API设计](docs/lab5_design.md)、[Git工作流](docs/lab5_git_workflow.md)已提供。Harris三组k、Shi-Tomasi、FAST、四层金字塔、浮点DoG及手写Harris均有结果。Git采用feature/l5-corner分支合并main，目标远程[IntegratedDesign](https://github.com/jiuge712/IntegratedDesign)，实际记录见Git文档及证据。用户未明确告知已完成的任务默认继续未完成。
 
+代理已完成main及feature/l5-corner实际推送和远程SHA核对，图片/输出/证据保留在本地；9项换图与保留机制集成检查通过。源码包deliverables/lab5_source.zip可重新生成，个人截图和课堂提交仍见任务清单。
+
 实验三执行 `src/run_lab3.py`，报告见 [实验三报告](docs/lab3_report.md)，架构和接口见 [SFM架构](docs/architecture.md)、[接口约定](docs/interface_agreement.md)。
 
 实验二入口为 `src/run_lab2.py`，完整流程见 [实验二复现指南](docs/lab2_reproduction.md)，结果见 [实验二报告](docs/lab2_report.md)。需求评审见 [MVP范围](docs/mvp_review.md)，官方 API 调研见 [API说明](docs/api_notes.md)。
