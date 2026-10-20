@@ -73,3 +73,7 @@ run_lab4.py 的source_path/load_gray负责路径与uint8/最短边校验；run�
 ## 实验五角点与尺度空间
 
 新增feature.py与lab5_scale.py的函数签名、输入/输出、数学、边界、异常和测试详见[实验五设计](lab5_design.md)。run_lab5.py复用common与LatestRun，执行pytest后验证原始响应/DoG、坐标、金字塔尺寸、PNG/NPZ回读及输入哈希，再发布lab5_latest。prepare_chess.py只用于明确授权的输入准备，拒绝覆盖已有不同棋盘。课堂互查/小组规范确认仍需真实参与者完成，不因新增技术设计而自动勾选user_tasks.md。
+
+## 实验六SIFT与已知变换验证
+
+features.py的extract_sift和配置校验、lab6_geometry.py的全画布变换/投影/KNN比例/已知位置误差、run_lab6.py的显式工作尺寸/参数实验/图像与数值证据/pytest、lab6_report.py的数据报告详见[实验六设计](lab6_design.md)。关键约定为float32 N×128描述子与KeyPoint逐行对应，空特征稳定返回，不隐式改变原始图片或套用Harris整数坐标。当前全套147主用例及15子用例回归通过，40项为新增实验六测试。PR实际流程见lab6_git_workflow.md。
