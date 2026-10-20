@@ -1,0 +1,20 @@
+{
+  "input": "data/input/uneven_real.jpg",
+  "max_input_side": 1600,
+  "sift": {
+    "nfeatures": 0,
+    "nOctaveLayers": 3,
+    "contrastThreshold": 0.04,
+    "edgeThreshold": 10.0,
+    "sigma": 1.6,
+    "enable_precise_upscale": false
+  },
+  "nfeatures_values": [0, 300, 800],
+  "contrast_thresholds": [0.04, 0.01, 0.08],
+  "edge_thresholds": [5.0, 10.0, 20.0],
+  "rotation_degrees": 30.0,
+  "scale_factor": 0.6,
+  "ratio_threshold": 0.75,
+  "geometry_tolerance_px": 3.0,
+  "max_draw_matches": 50
+}

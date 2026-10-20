@@ -1,6 +1,6 @@
 # 预处理模块编码规范
 
-适用实验一至五的Python模块。以下是已可用于本项目的技术规范，小组需在真实讨论后确认或修改，不预填批准记录。
+适用实验一至六的Python模块。以下是已可用于本项目的技术规范，小组需在真实讨论后确认或修改，不预填批准记录。
 
 ## 命名与职责
 
@@ -27,6 +27,8 @@ NumPy使用img[y,x]，特征坐标xy，BGR显示需转RGB。实验三至五输�
 实验五起使用pytest组织核心新测试，保留此前unittest回归。pytest.ini指定src模块路径；JUnit和文本日志保留真实失败/跳过状态，不把子用例误计为独立主用例。手工终端截图由真实操作人提供。
 
 每个实验结束同步更新统一reproduction.md、image_requirements.md，并更新user_tasks.md的真实待办状态；不将学生未完成的活动自动勾选。
+
+实验六起按指导书采用feature分支+PR/MR实际合并与Conventional Commits。使用feat:/fix:/docs:/test:/refactor:前缀，提交围绕实际实现和验证；不把未完成PR写成已合并，不混入用户原有无关改动。SIFT保留浮点坐标、size直径和angle度，不复用Harris的int32点集契约；描述子必须与关键点行对齐。临时目录显式置于项目.tmp时只用专用测试路径，说明pytest清空语义。
 
 ## 小组实际确认 待填写
 

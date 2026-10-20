@@ -1,6 +1,8 @@
-# 实验三预处理接口约定
+# 预处理与特征提取接口约定
 
 实现：src/lab3_filter.py。
+
+本文件保留实验三预处理契约，实验六SIFT契约追加于末尾；既有小组确认状态不因技术实现新增而自动改变。
 
 ```python
 def preprocess(img_bgr: np.ndarray, cfg: dict) -> np.ndarray:
@@ -40,3 +42,16 @@ assert out.shape == img.shape and out.dtype == img.dtype
 参考：[OpenCV滤波接口](https://docs.opencv.org/4.x/d4/d86/group__imgproc__filter.html)、[scikit-image SSIM](https://scikit-image.org/docs/stable/api/skimage.metrics.html#skimage.metrics.structural_similarity)。
 
 这是已实现的技术约定，小组共同确认应在真实讨论后补充参与者、日期和变更意见。
+
+## 实验六SIFT提取接口
+
+```python
+from features import extract_sift
+kps, desc = extract_sift(img, cfg=None)
+```
+
+src/features.py接收非空uint8灰度/BGR/BGRA，明确转灰度并舍弃Alpha，返回KeyPoint列表和float32 (N,128)描述子，行与关键点严格对应。无特征返回[]、(0,128)，不返回None。关键点pt=(x,y)为工作图浮点像素，size是直径，angle单位度；不使用实验五Harris的整数坐标输出契约。
+
+cfg字段为nfeatures（整数≥0）、nOctaveLayers（整数≥1）、contrastThreshold/edgeThreshold/sigma（有限正数）和enable_precise_upscale（bool）。None使用规范默认值，未知键与不合法图像/参数明确报错；接口不读写文件、不修改图像或cfg。参数与错误详情见lab6_design.md。
+
+run_lab6.py可按显式max_input_side在外围生成工作尺寸，记录原图到工作图的像素中心矩阵。后续使用工作图xy时相机内参也应在对应尺度，或先映回原图，不混用像素坐标。描述子按OpenCV实际缩放存储，不假定单位范数；匹配使用L2。该技术接口已实现，不等于完成真实小组接口确认，user_tasks.md的课堂任务保持原状态。

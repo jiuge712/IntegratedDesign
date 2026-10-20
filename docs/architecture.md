@@ -25,7 +25,7 @@ flowchart LR
 | --- | --- | --- | --- |
 | 加载 | PNG/JPEG路径 | 非空uint8 BGR，H×W×3 | 已实现，灰度扩展/BGRA舍弃Alpha |
 | 预处理 | BGR与cfg字典 | 同尺寸/类型/顺序的新数组 | 三已实现并实际调用 |
-| 特征 | 图像和参数 | xy像素坐标N×2 float32、描述子N×D和方法/dtype元数据 | 设计约定 |
+| 特征 | 图像和参数 | SIFT KeyPoint列表（含xy/size/angle）、float32 N×128和元数据 | 六已实现，见features.py |
 | 匹配 | 两组描述子 | M×2对应整数索引和距离/置信度 | 设计约定 |
 | 几何 | 对应点、内参、轨迹 | K/R/t float64和轨迹，引用原图坐标 | 设计约定 |
 | 点云 | 位姿和轨迹 | XYZ N×3 float64，颜色N×3 uint8及尺度元数据 | 设计约定 |
@@ -38,3 +38,9 @@ flowchart LR
 ## 实验四扩展
 
 实验四在灰度分析分支新增Sobel、Canny和阈值分割，输出二维梯度/二值数组及统计，不覆盖preprocess的BGR返回值。已有实验三的架构图和最新结果保留，三至四的函数级数据流见detailed_design.md。编码规范和技术走查分别见coding_standards.md、design_walkthrough.md，真实参与者待办见user_tasks.md。
+
+## 实验六特征边界
+
+features.py的extract_sift(img,cfg=None)实现上述特征节点：灰度/BGR/BGRA uint8加载边界，返回cv2.KeyPoint与float32 N×128，空特征归一化为(0,128)。实验五Harris在feature.py，两个文件明确区分。
+
+实验六主入口为性能与可观察性显式支持max_input_side，超限时生成等比工作图并记录源像素中心→工作图矩阵；这是外围分析步骤，不修改实验三preprocess的同尺寸契约。后续几何模块应选择工作图坐标与相应内参，或通过矩阵映回原图，不混用坐标尺度。实验六简单KNN与已知生成矩阵误差仅用于不变性验证，通用匹配/相机几何/点云仍属于后续实验。

@@ -1,6 +1,6 @@
 # 各实验统一复现指南
 
-本文件是固定的复现入口，目前覆盖实验一至五。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。
+本文件是固定的复现入口，目前覆盖实验一至六。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。
 
 图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。实验五棋盘已获你明确授权由程序绘制，作为正式素材并记录来源。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
 
@@ -38,8 +38,9 @@ py -3.14 -m venv .venv
 | 三 空间滤波与增强 | config/lab3_images.json | src/run_lab3.py | docs/lab3_report.md | data/output/lab3_latest |
 | 四 边缘与阈值分割 | config/lab4_images.json | src/run_lab4.py | docs/lab4_report.md | data/output/lab4_latest |
 | 五 角点与尺度空间 | config/lab5_images.json | src/run_lab5.py | docs/lab5_report.md | data/output/lab5_latest |
+| 六 SIFT提取与描述 | config/lab6_images.json | src/run_lab6.py | docs/lab6_report.md | data/output/lab6_latest |
 
-对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至五的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。
+对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至六的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。
 
 ## 实验一复现
 
@@ -122,7 +123,7 @@ preprocess(img_bgr,cfg) 接收 uint8 BGR，输出同尺寸 BGR，不修改输入
 
 ## 实验四复现
 
-需要一张清晰纹理图和一张光照不均图，uint8，主入口宽高至少为5，建议宽高均≥31且640×480至1920×1080。当前texture使用你的插画，uneven=null时从同图生成横向增益0.35→1.0的光照不均版本；报告明确标为模拟，不称为真实窗边照片。
+需要一张清晰纹理图和一张光照不均图，uint8，主入口宽高至少为5，建议宽高均≥31且640×480至1920×1080。当前texture使用你的插画；你于2026年10月20日明确告知已换实拍，uneven现为data/input/uneven_real.jpg（4096×3072、BGR uint8），原尺寸用于本实验。若以后设uneven=null，才从同图生成横向增益0.35→1.0的模拟版本，报告会区分来源。
 
 ```powershell
 .\.venv\Scripts\python.exe -X utf8 src/test_lab4.py
@@ -131,11 +132,11 @@ $LASTEXITCODE
 .\.venv\Scripts\python.exe -X utf8 src/package_lab4.py
 ```
 
-28项自检与12项正式检查应通过。默认生成27张图像/对比图：Sobel核3/5的Gx/Gy/幅值，Canny三组50/150、100/200、150/250，固定128与Otsu，光照不均图的自适应Gaussian阈值，以及手写NMS/八邻域连接加分对比。使用真实uneven输入时无需导出增益图，输出数量会少一张。
+28项自检与12项正式检查应通过。当前真实uneven输入生成26张图像/对比图：Sobel核3/5的Gx/Gy/幅值，Canny三组50/150、100/200、150/250，固定128与Otsu，光照不均图的自适应Gaussian阈值，以及手写NMS/八邻域连接加分对比。只有模拟输入时另导出增益图，共27张。
 
 Sobel梯度保持float64，显示图分别归一化，恒定图显示全黑。Canny先显式Gaussian sigma=1.0，apertureSize=3、L2gradient=True，手写分支也用同一设置。low/high需有限且0≤low<high；调整canny_pairs保留三组。阈值在原始梯度尺度上使用，不是显示幅值图的灰度。
 
-Otsu实际阈值打印在控制台并写入报告。自适应blockSize默认31、C=5，窗口为≥3奇整数。实验结果显示白色区域比例和左右比例，不当作有人工标签的分割准确率。清晰图本次Otsu=128，恰与固定128相同，应如实观察；光照不均图的全局Otsu本次为110。
+Otsu实际阈值打印在控制台并写入报告。自适应blockSize默认31、C=5，窗口为≥3奇整数。实验结果显示白色区域比例和左右比例，不当作有人工标签的分割准确率。清晰图本次Otsu=128，恰与固定128相同；新实拍图2026年10月20日简单验证Otsu=66，12项正式检查通过。此前模拟图的110属于旧运行，不沿用到实拍图。简单验证记录见evidence/lab4_latest/real_input_verification.json。
 
 替换个人图片：
 
@@ -164,7 +165,7 @@ $LASTEXITCODE
 
 prepare_chess.py只新建棋盘；已有不同内容会拒绝覆盖，防止改掉你的替换素材。默认棋盘相同则复用，来源写入evidence/chess_source.json。已经有自己的棋盘时跳过该准备命令。
 
-实验五独立35项pytest用例应通过。主入口自动执行全项目pytest，本次107项用例及15项unittest子用例通过，无失败/错误/跳过；其中二至四回归72项、五35项。JUnit的tests=122包含子用例，不能误写成122项独立主用例。正式运行14项检查，默认27张PNG；texture=null时省略纹理对照，26张。日志和JUnit保存在evidence/lab5_latest，程序生成的图片/文本不冒充真实终端截图。
+实验五独立35项pytest用例应通过。主入口自动执行全项目pytest：实验五原完成时107项主用例及15项子用例通过（JUnit tests=122含子用例）；新增实验六后全项目变为147项主用例及15项子用例，其中二至四72、五35、六40。应以各次日志为准，不能将JUnit含子用例总数当成主用例数。正式运行14项检查，默认27张PNG；texture=null时省略纹理对照，26张。日志和JUnit保存在evidence/lab5_latest，程序生成的图片/文本不冒充真实终端截图。
 
 Harris的k固定对比0.04/0.06/0.1，block_size=2、sobel_ksize=3；quality_level=0.01是相对各自最大正R的阈值，min_distance=10为当前图像像素，max_harris_corners=500。Shi-Tomasi最多100个，FAST阈值20并启用非极大值抑制。可改质量阈值、间距、上限和核等字段；正式配置保留指导书三组k与四层金字塔。不接受未知键。
 
@@ -189,15 +190,52 @@ Git流程、目标远程及真实提交/推送记录见lab5_git_workflow.md与ev
 
 本次代理已实际推送main及feature/l5-corner并核验远程SHA；9项集成检查验证换图、中文/空格路径、奇数尺寸、texture=null清除旧输出、失败保留、原图/其他实验不变，记录为evidence/lab5_latest/replacement_verification.json。个人复现/截图/提交状态仍须你明确告知后更新。
 
+## 实验六复现
+
+默认输入为你已提供的建筑夜景实拍data/input/uneven_real.jpg。配置config/lab6_images.json的max_input_side=1600将4096×3072等比缩为1600×1200，仅在分析时生成工作图，不修改原照片。设0可保持原尺寸；换图后记录实际尺寸和哈希，不强制拉伸。缩小后最短边不足16会报错，应提高上限或设0。
+
+```powershell
+Set-Location D:\IntegratedDesign\project_i
+.\.venv\Scripts\python.exe -X utf8 -m pytest -v src/test_lab6.py --basetemp=.tmp/pytest_lab6_manual
+.\.venv\Scripts\python.exe -X utf8 src/run_lab6.py
+$LASTEXITCODE
+.\.venv\Scripts\python.exe -X utf8 src/package_lab6.py
+```
+
+实验六40项独立用例通过。一键入口自动回归全项目147项主用例与15项子用例，12项正式检查，默认18张PNG，工作图2455个关键点、描述子shape=(2455,128)、float32。无特征图可以安全运行，但没有有效的纹理观察结果，会省略描述子示例图；不要把此情况当作成功完成不变性验证。
+
+本次手动命令的pytest临时目录为项目.tmp/pytest_lab6_manual；run_lab6.py自动测试显式使用.tmp/pytest_lab6。因此本实验这些入口无需写入C盘pytest-of-jiuge。原pytest.ini未改，其他直接pytest命令若不加--basetemp仍使用系统默认。pytest会在会话开始时清空指定basetemp，只使用专用临时目录，不放原图、报告或截图，也不要并发使用同一basetemp。
+
+默认SIFT参数为nfeatures=0、nOctaveLayers=3、contrastThreshold=0.04、edgeThreshold=10、sigma=1.6、enable_precise_upscale=False。参数实验独立改变nfeatures 0/300/800、contrastThreshold 0.04/0.01/0.08、edgeThreshold 5/10/20。相同配置复用提取，九条对照记录对应七次唯一配置。nfeatures=300本次实际返回301，是临界同响应点一并保留，不强行改成300；数量以parameters.csv为准。edgeThreshold越大过滤的边缘状点越少，不能照指导书排错段将其理解为“调大可排掉更多边缘点”。
+
+生成30°旋转、0.6倍缩放及两者组合，使用足够大的完整画布，目标尺寸分别1986×1840、960×720、1192×1104。SIFT重新提取后对全部描述子做BF L2 KNN(k=2)，d1<0.75*d2。匹配比例分母为原图2455个关键点实例，不用截断描述子数。前50条只用于绘图。
+
+本次旋转/缩放/组合ratio通过数1636/843/884，比例66.64%/34.34%/36.01%；已知变换下≤3工作像素的几何一致数1602/771/827。ratio通过可能包括重复窗格误配，不能直接当全部正确。本次只验证已知受控变换，不做实验七完整匹配或实验八RANSAC/拼接。
+
+换图无需改源码：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab6.py --input "data/input/我的纹理照片.jpg"
+.\.venv\Scripts\python.exe -X utf8 src/run_lab6.py --input "data/input/photo.jpg"
+```
+
+也可改lab6_images.json的input，或复制该配置修改max_input_side和其他参数后以--config指定。JSON相对路径以project_i为根，支持中文/空格路径；图像需uint8，灰度/BGR/BGRA明确转换。配置拒绝未知字段。extract_sift(img,cfg=None)在src/features.py，N个KeyPoint与float32 N×128描述子逐行对齐，无特征为(0,128)。与实验五src/feature.py不是同一文件。
+
+主要图为l6_keypoints.png、l6_distributions.png、l6_parameter_counts.png、l6_contrast_keypoints.png、l6_transform_compare.png、l6_matches_combined.png及l6_descriptor_1/2.png。圆圈表示尺度范围（size是直径），短线表示主方向；两幅4×4网格、每格8方向的玫瑰图共用半径尺度，角度在主方向对齐坐标中，不把存储值当原始梯度计数或单位向量。
+
+证据位置evidence/lab6_latest：results.json记录输入/工作尺寸、实际参数和矩阵；parameters.csv及invariance.csv保存数量/比例；keypoints.json、matches.json保存全部点及匹配误差；features.npz保存全部float32描述子和float64矩阵（np.load(...,allow_pickle=False)）。pytest.log、pytest.xml为实际测试证据，不能冒充终端截图。换图/空图/失败保留等九项集成检查在integration_verification.json。
+
+Git功能分支和真实PR链接/状态见lab6_git_workflow.md及evidence/lab6_git.log。原始个人图片不推送Git。按user_tasks.md亲自复现、补Git提交历史截图/个人信息、核对PR并提交；修改文档后再次package_lab6.py，源码ZIP不含输入、结果、截图或.git历史。
+
 ## 同一新图片用于各实验
 
-五个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture或同步改对应JSON；四的真实光照不均图用--uneven指定，五的棋盘另用--chess指定。纹理图不能自动代替棋盘必需素材。无需改源码。
+六个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改对应JSON；四的真实光照不均图用--uneven指定，五的棋盘另用--chess指定。纹理图不能自动代替棋盘必需素材。无需改源码。
 
 JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空格、中文路径用双引号。保持对应角色的格式、通道和尺寸要求即可重复替换。
 
 ## 输出保留、排错与提交
 
-各实验只留lab1_latest至lab5_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图与派生输入保留，其他实验最新结果不受影响。自动数组自检独立记录。
+各实验只留lab1_latest至lab6_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图与派生输入保留，其他实验最新结果不受影响。自动数组自检独立记录。
 
 | 现象 | 处理 |
 | --- | --- |
@@ -211,6 +249,9 @@ JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空
 | 五的FAST在理想棋盘为0 | 属于圆周比较的条件差异，查看个人纹理对照，不强造角点 |
 | pytest导入失败或找不到feature | 安装requirements.txt；从project_i根目录用python -m pytest，保留pytest.ini |
 | 生成棋盘提示文件已存在且不同 | 不覆盖你的素材；跳过prepare_chess.py，直接指定你的棋盘运行 |
+| 六的SIFT没有关键点 | 检查纹理/清晰度与参数；空描述子为(0,128)，不伪造匹配 |
+| 六的nfeatures=300得到301 | 本机临界同响应点可能并保留，以实际数量为准 |
+| 六的缩放后最短边不足16 | 提高max_input_side或设0，保持比例，不强拉伸 |
 | 核/sigma 不合法 | 核≥3奇整数，sigma 有限正数 |
 | 锐化过冲/黑边 | 降低系数，结合局部图观察 |
 | 运行锁存在 | 确认无同实验进程；中断残留时才移除对应 .labN_running.lock |
