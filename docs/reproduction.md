@@ -1,6 +1,6 @@
 # 各实验统一复现指南
 
-本文件是固定的复现入口，目前覆盖实验一至六。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。
+本文件是固定的复现入口，目前覆盖实验一至七。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。实验七人工误配率待真实标签补齐，不将程序完成等同课堂活动完成。
 
 图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。实验五棋盘已获你明确授权由程序绘制，作为正式素材并记录来源。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
 
@@ -39,8 +39,9 @@ py -3.14 -m venv .venv
 | 四 边缘与阈值分割 | config/lab4_images.json | src/run_lab4.py | docs/lab4_report.md | data/output/lab4_latest |
 | 五 角点与尺度空间 | config/lab5_images.json | src/run_lab5.py | docs/lab5_report.md | data/output/lab5_latest |
 | 六 SIFT提取与描述 | config/lab6_images.json | src/run_lab6.py | docs/lab6_report.md | data/output/lab6_latest |
+| 七 特征匹配与误配分析 | config/lab7_images.json | src/run_lab7.py | docs/lab7_report.md | data/output/lab7_latest |
 
-对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至六的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。
+对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至七的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。人工持久CSV放data/annotations，避免latest替换清理。
 
 ## 实验一复现
 
@@ -202,7 +203,7 @@ $LASTEXITCODE
 .\.venv\Scripts\python.exe -X utf8 src/package_lab6.py
 ```
 
-实验六40项独立用例通过。一键入口自动回归全项目147项主用例与15项子用例，12项正式检查，默认18张PNG，工作图2455个关键点、描述子shape=(2455,128)、float32。无特征图可以安全运行，但没有有效的纹理观察结果，会省略描述子示例图；不要把此情况当作成功完成不变性验证。
+实验六40项独立用例通过。实验六完成时全项目147项主用例与15项子用例，新增七后重跑全套会变为187项主用例与15项子用例；各实验独立数量不变。六正式12项检查、默认18张PNG，工作图2455个关键点、描述子shape=(2455,128)、float32。无特征图可安全运行，但没有有效纹理观察结果，会省略描述子示例图；不要把此情况当作完成有效不变性验证。
 
 本次手动命令的pytest临时目录为项目.tmp/pytest_lab6_manual；run_lab6.py自动测试显式使用.tmp/pytest_lab6。因此本实验这些入口无需写入C盘pytest-of-jiuge。原pytest.ini未改，其他直接pytest命令若不加--basetemp仍使用系统默认。pytest会在会话开始时清空指定basetemp，只使用专用临时目录，不放原图、报告或截图，也不要并发使用同一basetemp。
 
@@ -227,15 +228,65 @@ $LASTEXITCODE
 
 Git功能分支和真实PR链接/状态见lab6_git_workflow.md及evidence/lab6_git.log。原始个人图片不推送Git。按user_tasks.md亲自复现、补Git提交历史截图/个人信息、核对PR并提交；修改文档后再次package_lab6.py，源码ZIP不含输入、结果、截图或.git历史。
 
+## 实验七复现
+
+读取你提供的data/input/seven-1.jpg和seven-2.jpg，两张4096×3072、BGR uint8的图书馆实拍，场景有大面积重叠，含视角/反射/行人变化。无需派生或下载照片；不要求同尺寸，不做像素相减或强行拉伸。
+
+```powershell
+Set-Location D:\IntegratedDesign\project_i
+.\.venv\Scripts\python.exe -X utf8 -m pytest -v src/test_lab7.py --basetemp=.tmp/pytest_lab7_manual
+.\.venv\Scripts\python.exe -X utf8 src/run_lab7.py
+$LASTEXITCODE
+.\.venv\Scripts\python.exe -X utf8 src/package_lab7.py
+```
+
+实验七40项独立用例、全项目187项主用例及15项子用例、14项正式检查通过。默认24张PNG（包含15张人工样本页），加annotate.html和labels_template.csv。无特征/少匹配时输出数量会减少；导入明确标签后可增加最多3张绿/红人工标签连线图。pytest临时目录自动为D盘项目.tmp/pytest_lab7，手动命令也显式给出专用目录；pytest会清空该目录，勿放原图/标注/截图，不并发使用相同basetemp。
+
+正式max_input_side=0保持原始分辨率，SIFT实例33057/29086、float32 N×128。试运行发现长边1600时严格0.6档最终仅24对，2400时43对，故正式保留原图细节，三档最终58/175/1148，均可抽50。改成缩图可以减小运行和输出开销，但对应数量/样本总体会改变，旧标签不可沿用，不应把缩图不足50时伪装成已抽50。
+
+BF用NORM_L2、crossCheck=False，双向KNN(k=2)覆盖全部描述子；单向ratio数量83/344/4102，前向ratio+互为最近邻81/284/2281，双向ratio58/175/1148。双向ratio是指导书示例实际实现的更严格集合，不与“仅互为最近邻”混名。严格d1<threshold*d2，d2=0拒绝；无第二邻点不做ratio。max_distance=null默认不加绝对阈值；distance_thresholds为补充L2对照，不把L2数值当ratio。
+
+FLANN加分对比为KD-tree algorithm=1、trees=5、checks=50，先预热再计三次双向构建+KNN中位耗时；当前原尺寸实测FLANN比BF快，但首邻结果和最终配对有差异，具体时延/一致率以本次results.json为准，不保证其他机器或参数仍然更快。
+
+### 人工误匹配率 必须由真实标注补齐
+
+正式三档均随机无放回抽50对，seed=7；跨组共137个唯一配对，同一对只标一次，样本固定在annotation_manifest.json。当前未标注，误率为null，表格显示“待人工标注”，不是0%或正确率100%。
+
+1. 用浏览器打开data/output/lab7_latest/annotate.html，填写真实标注者，切换0.6/0.75/0.9三组。
+2. 核对左右紫色十字是否同一实际物理点；可调局部半径、全图定位并打开原工作图，Y/N/U分别记正确/错误/不确定。重复窗格、反射、移动人物要结合上下文，不能根据ratio自动判定。
+3. 导出CSV，保存到data/annotations/。导出文件名为lab7_labels_数据ID前16位.csv，按实际文件名使用下列命令；若愿意统一命名为lab7_labels.csv也可以。页面本地缓存不是文件备份，重跑前先导出；也支持导入既有CSV继续标注。
+4. 用实际CSV重新运行。程序只读取标签，复制使用副本到证据，不改原CSV；全组明确判断后计算误率与Wilson区间。uncertain不会被计为错误/正确，未完成的组仍为空；不足50会标记课程50对条件未完成。
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab7.py --labels "data/annotations/lab7_labels.csv"
+.\.venv\Scripts\python.exe -X utf8 src/package_lab7.py
+```
+
+CSV表头固定dataset_id,pair_id,query_index,train_index,label,reviewer,note。label为correct/incorrect/uncertain或空；非空标签需填真实reviewer。数据ID绑定照片/尺寸/提取配置/关键点/描述子，旧来源、索引错位和重复行均报错并保留前次完整结果。标注文件不要留在data/output或evidence目录作为持久源，那里重跑会替换。
+
+每组误配率=incorrect/(correct+incorrect)，总体是该组“双向ratio最终匹配集合”。用真实样本估计数量与正确性权衡后再下最终阈值结论；默认0.75不是人工验证最优阈值。程序不使用RANSAC/单应性/互查来伪造人工真值，实验八未执行。
+
+### 换图、输出与评审
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab7.py --image1 "data/input/新场景1.jpg" --image2 "data/input/新场景2.jpg"
+```
+
+也可修改config/lab7_images.json。labels默认null，换图时先不带旧--labels并使用新模板。两张可不同尺寸，uint8灰度/BGR/BGRA明确转灰度，原始输入禁止覆盖。保留max_input_side=0可完整分析，设上限时等比缩小并记录坐标映射。更改提取和工作尺寸后重新抽样，不能复用旧索引标签。
+
+主要图：l7_before_after.png、l7_matches_raw/ratio/symmetric.png、l7_threshold_counts.png、l7_ratio_distribution.png及sample_阈值_页号.png。灰/蓝连线仅区分处理阶段，紫色十字仅定位；绿/红只在导入人类标签后表示正确/错误。原始完整匹配和距离在matches.json，关键点keypoints.json，描述子descriptors.npz（allow_pickle=False），统计metrics.csv/results.json。browser_qa.json记录实际离线页面检查，integration_verification.json记录11项换图/空图/CSV/失败保留及原数据保护检查。
+
+指导书要求真实同学结对交换L5–L7代码，至少5条意见。lab7_code_review.md已提供清单、8条明确标为技术自走查的意见和真实结对空位；docs/defects.md区分设计防护、实际观察、已处理和人工待办，需真实参与者继续填写，不把代理自评当同学活动。按user_tasks.md完成实际标注/评审/修复记录和提交。Git分支/PR实际状态见lab7_git_workflow.md。个人文件变更后重新package_lab7.py，源码ZIP不带原图、输出、标签、证据和.git。
+
 ## 同一新图片用于各实验
 
-六个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改对应JSON；四的真实光照不均图用--uneven指定，五的棋盘另用--chess指定。纹理图不能自动代替棋盘必需素材。无需改源码。
+七个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改JSON；七需要两个有重叠场景的图片，用--image1/--image2。四的真实光照不均图用--uneven，五的棋盘用--chess。单张纹理图不能自动代替棋盘或真实双视角对。无需改源码。
 
 JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空格、中文路径用双引号。保持对应角色的格式、通道和尺寸要求即可重复替换。
 
 ## 输出保留、排错与提交
 
-各实验只留lab1_latest至lab6_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图与派生输入保留，其他实验最新结果不受影响。自动数组自检独立记录。
+各实验只留lab1_latest至lab7_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图、派生输入及data/annotations中的人工CSV保留，其他实验最新结果不受影响。自动数组自检独立记录。
 
 | 现象 | 处理 |
 | --- | --- |
@@ -252,6 +303,9 @@ JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空
 | 六的SIFT没有关键点 | 检查纹理/清晰度与参数；空描述子为(0,128)，不伪造匹配 |
 | 六的nfeatures=300得到301 | 本机临界同响应点可能并保留，以实际数量为准 |
 | 六的缩放后最短边不足16 | 提高max_input_side或设0，保持比例，不强拉伸 |
+| 七的误匹配率显示待人工标注 | 按标注页实际判断、导出到持久目录后--labels导入，未填/不确定不当真值 |
+| 七的CSV提示来源不匹配 | 图/工作尺寸/提取已变化，保留旧CSV并使用当前新模板，不改ID硬套 |
+| 七的严格档不足50对 | 按实际数量报告；当前原尺寸58对可抽50，缩图可能减少可匹配细节 |
 | 核/sigma 不合法 | 核≥3奇整数，sigma 有限正数 |
 | 锐化过冲/黑边 | 降低系数，结合局部图观察 |
 | 运行锁存在 | 确认无同实验进程；中断残留时才移除对应 .labN_running.lock |

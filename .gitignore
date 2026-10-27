@@ -9,4 +9,6 @@ data/output/*
 !data/output/.gitkeep
 evidence/*
 deliverables/*
+data/annotations/*
+!data/annotations/.gitkeep
 

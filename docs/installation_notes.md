@@ -13,6 +13,7 @@
 7. 实验三新增 scikit-image 用于 SSIM。沙箱内首次安装受访问限制，授权后在同一虚拟环境安装 scikit-image 0.26.0 及其传递依赖；更新 requirements.txt 并通过 pip check。实验三22项自检、9项个人运行检查通过。
 8. 实验五新增pytest 9.1.1及colorama/iniconfig/pluggy/pygments；沙箱内首次下载失败，获得安装授权后在同一.venv安装。requirements.txt及environment.md已更新。全项目107项pytest用例及15项unittest子用例通过，实验五14项正式检查通过。
 9. 实验六使用已安装OpenCV 5.0.0的SIFT主包接口，没有新增Python依赖；按requirements.txt锁定版本复现，本次还显式设置enable_precise_upscale=False。新入口pytest临时目录指定为D盘项目.tmp/pytest_lab6，手动命令也给出--basetemp，原pytest.ini保持。147项主用例/15项子用例与12项正式检查通过，pip check无冲突。
+10. 实验七沿用同一环境，无新增Python依赖。BF/FLANN与离线标注只使用已安装库/浏览器，一键pytest临时文件为项目.tmp/pytest_lab7。当前187项主用例/15项子用例、14项正式检查及浏览器/集成检查通过；数据和人工CSV分别保存在输入与持久标注目录。
 
 ## 本机提示
 

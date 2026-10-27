@@ -1,4 +1,4 @@
-# 预处理与特征提取接口约定
+# 预处理 特征与匹配接口约定
 
 实现：src/lab3_filter.py。
 
@@ -55,3 +55,9 @@ src/features.py接收非空uint8灰度/BGR/BGRA，明确转灰度并舍弃Alpha�
 cfg字段为nfeatures（整数≥0）、nOctaveLayers（整数≥1）、contrastThreshold/edgeThreshold/sigma（有限正数）和enable_precise_upscale（bool）。None使用规范默认值，未知键与不合法图像/参数明确报错；接口不读写文件、不修改图像或cfg。参数与错误详情见lab6_design.md。
 
 run_lab6.py可按显式max_input_side在外围生成工作尺寸，记录原图到工作图的像素中心矩阵。后续使用工作图xy时相机内参也应在对应尺度，或先映回原图，不混用像素坐标。描述子按OpenCV实际缩放存储，不假定单位范数；匹配使用L2。该技术接口已实现，不等于完成真实小组接口确认，user_tasks.md的课堂任务保持原状态。
+
+## 实验七匹配与人工标签
+
+matching.knn_matches(query,train,backend='bf',trees=5,checks=50,seed=7)接收有限float32 N×128，返回每query的0/1/2个DMatch，后端BF L2或FLANN KD-tree。无目标返回每查询空列表；单目标只有首邻，不能据此做ratio。filter_ratio严格d1<阈值*d2且d2>0；mutual_nearest是首邻互指，symmetric_ratio同时要求双向ratio，二者不混名。完整索引引用原始关键点，不以展示顺序重新编号。
+
+lab7_annotations的抽样按固定seed均匀无放回，标签数据ID绑定输入/工作尺寸/提取/关键点和描述子。CSV只读，校验七列、来源、ID、索引、标签/标注者及重复；未标或不确定不产生真值率。实际接口/异常/测试见lab7_design.md。人工误率与真实结对状态由参与者提供，不由程序完成标志代替。
