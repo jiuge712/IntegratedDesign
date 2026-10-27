@@ -1,6 +1,6 @@
 # 实验七 Git与PR记录
 
-沿用实验六起的feature分支、Conventional Commits和PR流程。仓库为[jiuge712/IntegratedDesign](https://github.com/jiuge712/IntegratedDesign)，从本地main（实验六合并bc1eabf）创建feature/l7-matching。完成程序、测试及文档后推送，PR链接和最终状态在发布核验时回填，实际记录保存为evidence/lab7_pr.json、lab7_git.log和lab7_git_status.json。
+沿用实验六起的feature分支、Conventional Commits和PR流程。仓库为[jiuge712/IntegratedDesign](https://github.com/jiuge712/IntegratedDesign)，从本地及远程main（实验六合并bc1eabf）创建feature/l7-matching。功能提交00dda1f已推送，真实PR为[PR #2 实验七匹配与人工标注工作流](https://github.com/jiuge712/IntegratedDesign/pull/2)。最终合并事件可在PR页核对，发布核验状态与完整SHA记录于evidence/lab7_pr.json、lab7_git.log和lab7_git_status.json。
 
 代码评审的技术自走查见lab7_code_review.md，真实结对≥5条仍需本人/同学完成；GitHub PR合并不能冒充同学交换代码或签字。
 
