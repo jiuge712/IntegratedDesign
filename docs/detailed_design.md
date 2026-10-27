@@ -77,3 +77,7 @@ run_lab4.py 的source_path/load_gray负责路径与uint8/最短边校验；run�
 ## 实验六SIFT与已知变换验证
 
 features.py的extract_sift和配置校验、lab6_geometry.py的全画布变换/投影/KNN比例/已知位置误差、run_lab6.py的显式工作尺寸/参数实验/图像与数值证据/pytest、lab6_report.py的数据报告详见[实验六设计](lab6_design.md)。关键约定为float32 N×128描述子与KeyPoint逐行对应，空特征稳定返回，不隐式改变原始图片或套用Harris整数坐标。当前全套147主用例及15子用例回归通过，40项为新增实验六测试。PR实际流程见lab6_git_workflow.md。
+
+## 实验七匹配与人工误配分析
+
+详见[实验七设计](lab7_design.md)：matching.py数值匹配/筛选，lab7_annotations.py抽样及标签校验/误率，lab7_artifacts.py离线页/图片/CSV，run_lab7.py证据与最新发布，lab7_report.py根据实际数据写报告。最近邻互查和双向ratio分离，缺邻/零距离安全处理，人工样本均匀而不挑最好50条。新40项测试后全套187主用例与15子用例通过；人工标注与真实结对意见仍由user_tasks.md跟踪。

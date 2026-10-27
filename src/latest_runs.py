@@ -27,7 +27,7 @@ def remove_owned(path: Path, parent: Path) -> None:
 class LatestRun:
     """Stage a run and replace the previous result only after successful verification."""
     def __init__(self, name: str):
-        if name not in ("lab1", "lab2", "lab3", "lab4", "lab5", "lab6"):
+        if name not in ("lab1", "lab2", "lab3", "lab4", "lab5", "lab6", "lab7"):
             raise ValueError("Unknown experiment")
         self.name = name
         self.parents = (ROOT / "data/output", ROOT / "evidence")
