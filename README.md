@@ -118,6 +118,13 @@ project_i/
   src/test_lab7.py              40项数值/标签/异常/保留测试
   src/package_lab7.py           实验七源码提交包
   config/lab7_images.json       两图路径、阈值、抽样和标签来源
+  src/homography.py             右→左RANSAC、完整画布和掩码羽化
+  src/run_lab8.py               实验八完整链路、回归和latest发布
+  src/demo_m1.py                一键M1技术演示与追溯提示
+  src/test_pipeline.py          三项核心链路断言和已知透视恢复
+  src/test_lab8.py              几何、融合、边界及结果回滚测试
+  src/package_lab8.py           实验八源码包
+  config/lab8_images.json       可换图路径、SIFT/RANSAC与画布上限
   data/annotations/            人工CSV持久位置，重跑不删除
   data/input/                   你提供的原始图片，程序不写入
   data/output/                  各实验最新图像与对比图

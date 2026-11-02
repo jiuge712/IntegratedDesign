@@ -30,8 +30,8 @@ Set-Location D:\IntegratedDesign\project_i
 | --- | --- | --- | --- |
 | L8-FR-01 特征与匹配 | features.py/matching.py | test_match_count_positive，实际≥30 | keypoints.json、matches.csv |
 | L8-FR-02 H和RANSAC统计 | homography.py | test_homography_shape/test_inlier_ratio_over_half/已知H外点测试 | results.json H、掩码、误差，geometry.npz |
-| L8-FR-03 内外点显示 | run_lab8.py | bool分组互斥、索引/计数检查 | l8_inliers/outliers/compare.png、展示索引 |
-| L8-FR-04 完整拼接与羽化 | homography.py | 负平移画布、黑色有效像素、独占区 | l8_stitch_hard/feather.png、valid_masks |
+| L8-FR-03 内外点显示 | run_lab8.py | bool分组互斥、索引/计数检查 | l8_inliers.png、l8_outliers.png、l8_inlier_outlier_compare.png、展示索引 |
+| L8-FR-04 完整拼接与羽化 | homography.py | 负平移画布、黑色有效像素、独占区 | l8_stitch_hard.png、l8_stitch_feather.png、l8_valid_masks.png |
 | L8-FR-05 链路单测与M1材料 | test_pipeline.py/demo_m1.py | 37项新增、全项目224主+15子，无跳过 | pytest.log/xml、本表；真实课堂记录仍待补 |
 | L8-FR-06 换图与结果保留 | run_lab8.py/latest_runs.py | 配置入口、发布失败回滚、换图集成验证 | results.json来源/配置、integration_verification.json |
 | 既有FR-01/FR-07 读取与可换图 | lab7_artifacts.py/CLI | 图片解码、覆盖路径 | 两图工作图/来源哈希 |
