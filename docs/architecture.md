@@ -50,3 +50,9 @@ features.py的extract_sift(img,cfg=None)实现上述特征节点：灰度/BGR/BG
 matching.py实现两组SIFT的BF/FLANN KNN、ratio和最近邻互查/双向ratio，索引始终引用当前原始关键点，统计不截断。lab7_annotations.py将最终集合固定抽样，真实标签独立置于data/annotations并绑定数据ID；标注页不产生算法伪真值。实验七使用真实双视角照片，不套用实验六已知变换误差。
 
 本次没有实现实验八RANSAC/拼接或后续相机几何/点云；相应架构节点仍为设计约定。用户已有预处理、SIFT及其他实验最新数据保留。流程、边界和发布见lab7_design.md。
+
+## 实验八二维几何扩展
+
+原“几何”设计节点现增加二维分支：features.py→matching.py→homography.py（右→左RANSAC H）→warp完整画布/羽化→报告与证据。run_lab8.py提供加载/工作尺寸与latest边界，demo_m1.py复用同一链路；不重跑或覆盖一至七结果。
+
+这只实现二维单应模型和拼接，原设计中的相机K/R/t、轨迹、三角化及点云仍未实现；不能从H直接宣称完成三维重建。默认工作长边2400，源→工作矩阵及原图H另存，原图不改；完整接口/测试见lab8_design.md。

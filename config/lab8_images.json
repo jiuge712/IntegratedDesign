@@ -1,0 +1,13 @@
+{
+  "image1": "data/input/eight-v6-1.jpg",
+  "image2": "data/input/eight-v6-2.jpg",
+  "max_input_side": 2400,
+  "sift": {},
+  "ratio_threshold": 0.75,
+  "ransac_threshold": 5.0,
+  "confidence": 0.995,
+  "max_iters": 10000,
+  "seed": 8,
+  "max_draw_matches": 100,
+  "max_canvas_pixels": 20000000
+}
