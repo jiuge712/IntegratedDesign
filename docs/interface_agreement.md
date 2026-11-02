@@ -61,3 +61,9 @@ run_lab6.py可按显式max_input_side在外围生成工作尺寸，记录原图�
 matching.knn_matches(query,train,backend='bf',trees=5,checks=50,seed=7)接收有限float32 N×128，返回每query的0/1/2个DMatch，后端BF L2或FLANN KD-tree。无目标返回每查询空列表；单目标只有首邻，不能据此做ratio。filter_ratio严格d1<阈值*d2且d2>0；mutual_nearest是首邻互指，symmetric_ratio同时要求双向ratio，二者不混名。完整索引引用原始关键点，不以展示顺序重新编号。
 
 lab7_annotations的抽样按固定seed均匀无放回，标签数据ID绑定输入/工作尺寸/提取/关键点和描述子。CSV只读，校验七列、来源、ID、索引、标签/标注者及重复；未标或不确定不产生真值率。实际接口/异常/测试见lab7_design.md。人工误率与真实结对状态由参与者提供，不由程序完成标志代替。
+
+## 实验八单应与拼接接口
+
+homography.py的estimate_homography(right,left,threshold=5.0,confidence=.995,max_iters=10000,seed=8)接收有限N×2对应点（至少4对非退化），返回右→左float64 H、OpenCV原始bool内点掩码和正向误差。工作图坐标与原图坐标分开记录，H_original=inv(S_left)H_work S_right。
+
+stitch_pair(image1,image2,H,max_pixels=20000000)严格接收uint8 BGR，不修改输入；返回完整画布hard/feather/overlay、右图warp、left_mask/right_mask/overlap、alpha和geometry。画布size=(W,H)，T补负坐标，右图TH；有效性由投影掩码判定，黑色像素有效。拒绝退化、无穷远线穿图、无重叠或超过资源上限；错误由一键入口转ERROR/非零。完整约束见lab8_design.md，不替代真实小组接口确认。

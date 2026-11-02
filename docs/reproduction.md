@@ -1,6 +1,8 @@
 # 各实验统一复现指南
 
-本文件是固定的复现入口，目前覆盖实验一至七。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。实验七人工误配率待真实标签补齐，不将程序完成等同课堂活动完成。
+本文件是固定的复现入口，目前覆盖实验一至八的技术复现。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。实验七人工误配率待真实标签补齐，不将程序完成等同课堂活动完成。
+
+实验八已根据本次提供的eight-v6-1/2恢复并完成技术链路；默认1740/1944内点（89.51%），拼接和羽化图已生成。真实M1及来源/角度确认仍待本人，见实验八章节和user_tasks.md。
 
 图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。实验五棋盘已获你明确授权由程序绘制，作为正式素材并记录来源。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
 
@@ -40,8 +42,9 @@ py -3.14 -m venv .venv
 | 五 角点与尺度空间 | config/lab5_images.json | src/run_lab5.py | docs/lab5_report.md | data/output/lab5_latest |
 | 六 SIFT提取与描述 | config/lab6_images.json | src/run_lab6.py | docs/lab6_report.md | data/output/lab6_latest |
 | 七 特征匹配与误配分析 | config/lab7_images.json | src/run_lab7.py | docs/lab7_report.md | data/output/lab7_latest |
+| 八 RANSAC与图像拼接 | config/lab8_images.json | src/run_lab8.py / src/demo_m1.py | docs/lab8_report.md | data/output/lab8_latest |
 
-对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至七的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。人工持久CSV放data/annotations，避免latest替换清理。
+对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至八的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。人工持久CSV放data/annotations，避免latest替换清理。
 
 ## 实验一复现
 
@@ -264,7 +267,7 @@ FLANN加分对比为KD-tree algorithm=1、trees=5、checks=50，先预热再计�
 
 CSV表头固定dataset_id,pair_id,query_index,train_index,label,reviewer,note。label为correct/incorrect/uncertain或空；非空标签需填真实reviewer。数据ID绑定照片/尺寸/提取配置/关键点/描述子，旧来源、索引错位和重复行均报错并保留前次完整结果。标注文件不要留在data/output或evidence目录作为持久源，那里重跑会替换。
 
-每组误配率=incorrect/(correct+incorrect)，总体是该组“双向ratio最终匹配集合”。用真实样本估计数量与正确性权衡后再下最终阈值结论；默认0.75不是人工验证最优阈值。程序不使用RANSAC/单应性/互查来伪造人工真值，实验八未执行。
+每组误配率=incorrect/(correct+incorrect)，总体是该组“双向ratio最终匹配集合”。用真实样本估计数量与正确性权衡后再下最终阈值结论；默认0.75不是人工验证最优阈值。程序不使用RANSAC/单应性/互查来伪造人工真值，实验八的几何内点也不能替代这些人工标签。
 
 ### 换图、输出与评审
 
@@ -278,15 +281,46 @@ CSV表头固定dataset_id,pair_id,query_index,train_index,label,reviewer,note。
 
 指导书要求真实同学结对交换L5–L7代码，至少5条意见。lab7_code_review.md已提供清单、8条明确标为技术自走查的意见和真实结对空位；docs/defects.md区分设计防护、实际观察、已处理和人工待办，需真实参与者继续填写，不把代理自评当同学活动。按user_tasks.md完成实际标注/评审/修复记录和提交。Git分支/PR实际状态见lab7_git_workflow.md。个人文件变更后重新package_lab7.py，源码ZIP不带原图、输出、标签、证据和.git。
 
+## 实验八复现
+
+本次使用你提供的data/input/eight-v6-1.jpg与eight-v6-2.jpg，两张3888×2592、BGR uint8远景照片。只在内存INTER_AREA等比缩至2400×1600；原片不变，不推定为本人实拍或已获出版授权，来源及≥30°拍摄条件待本人确认。现有配置足以完成技术运行，无需为程序运行再次换图。
+
+```powershell
+Set-Location D:\IntegratedDesign\project_i
+.\.venv\Scripts\python.exe -X utf8 -m pytest -v src/test_pipeline.py src/test_lab8.py --basetemp=.tmp/pytest_lab8_manual
+.\.venv\Scripts\python.exe -X utf8 src/demo_m1.py
+$LASTEXITCODE
+.\.venv\Scripts\python.exe -X utf8 src/package_lab8.py
+```
+
+run_lab8.py与demo_m1.py执行同一完整链路；演示入口在末尾另打印追溯提示。每次正式运行自动执行全项目pytest，不需先运行旧实验或手动制作中间匹配。37项新增测试（test_pipeline.py含3个必做断言及已知透视恢复），全项目224项主用例+15项子用例；13项正式检查、13张PNG。pytest临时文件显式在D盘项目.tmp/pytest_lab8，手动命令使用单独_manual目录；pytest会清空所指定basetemp，只放专用临时文件、不并发共用，也不要存报告/原图/截图。
+
+默认SIFT为7623/5540，BF L2 KNN后双向ratio=0.75保留1944对，RANSAC内点1740、外点204（89.51%），阈值5工作像素、seed=8、confidence=.995、maxIters=10000。内点中位误差0.254px、95分位1.251px。三档0.6/0.75/0.9分别1560/1714（91.02%）、1740/1944（89.51%）、1855/2218（83.63%），均重新估计模型，不把几何内点当人工真值。
+
+完整画布3359×1859，用两图像素中心角点并集和T补偿负坐标，左图T、右图TH；独立有效掩码保留真正黑色像素，重叠区距离羽化。l8_stitch_hard.png为直接覆盖，l8_stitch_feather.png为羽化成品，l8_overlap_diagnostic.png为50%叠加诊断；无效区黑色补边保留，不通过裁掉内容宣称对齐。
+
+换图无需改源码：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab8.py --image1 "data/input/另一场景左.jpg" --image2 "data/input/另一场景右.jpg"
+.\.venv\Scripts\python.exe -X utf8 src/demo_m1.py --config "config/lab8_images.json"
+```
+
+也可复制lab8_images.json修改image1/image2、max_input_side（0保留原尺寸）、SIFT、ratio、RANSAC和画布上限，再--config指定。JSON和图片相对路径按project_i根解释，中文/空格路径加引号。输入灰度/BGR/BGRA uint8、最短边≥16，不要求同尺寸；正式需至少30配对且内点率>50%。空白/坏图、退化点、投影无穷远或超过20百万像素等报ERROR/非零并保留前次完整结果。换图后必须重新看静态共同区域与接缝，不以成功退出码保证任意场景视觉质量。
+
+输出为data/output/lab8_latest，证据evidence/lab8_latest；成功完整运行替换该实验旧结果，失败保留，原图/其他实验/持久人工CSV不删。l8_before/inliers/outliers.png及compare显示采样连线（绿内点、红外点，最多100条），l8_support.png显示全部点位置；全部1944匹配的坐标/索引/误差/掩码在matches.csv，展示索引另存results.json。geometry.npz包含完整描述子、工作H/原图H、点、掩码、误差、T和alpha，用np.load(...,allow_pickle=False)读取。源→工作像素中心矩阵和H_original=inv(S_left)H_work S_right已记录，不混用缩图坐标。
+
+建筑、岸线、塔尖在本次视觉复核中基本连续，水面浮冰/反射有局部差异；羽化减弱亮度接缝，不保证修复动态变化或所有视差。≥30°不能由未标定照片自动证实。正式报告lab8_report.md、设计lab8_design.md、M1五分钟安排/追溯及真实评审空表lab8_m1_review.md已提供。本人复现、真实终端截图、素材来源/角度、现场演示和评分见user_tasks.md；这些不能由代理自动勾选。Git状态见lab8_git_workflow.md；源码ZIP不含原图、结果、证据或Git历史，课程要求这些材料另交，个人文档修改后重新package_lab8.py。
+
 ## 同一新图片用于各实验
 
-七个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改JSON；七需要两个有重叠场景的图片，用--image1/--image2。四的真实光照不均图用--uneven，五的棋盘用--chess。单张纹理图不能自动代替棋盘或真实双视角对。无需改源码。
+八个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改JSON；七、八各需两个适合自身任务的重叠场景图片，用各自--image1/--image2。四的真实光照不均图用--uneven，五的棋盘用--chess。单张纹理图不能自动代替棋盘或真实双视角对。无需改源码。
 
 JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空格、中文路径用双引号。保持对应角色的格式、通道和尺寸要求即可重复替换。
 
 ## 输出保留、排错与提交
 
-各实验只留lab1_latest至lab7_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图、派生输入及data/annotations中的人工CSV保留，其他实验最新结果不受影响。自动数组自检独立记录。
+各实验只留lab1_latest至lab8_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图、派生输入及data/annotations中的人工CSV保留，其他实验最新结果不受影响。自动数组自检独立记录。
 
 | 现象 | 处理 |
 | --- | --- |
