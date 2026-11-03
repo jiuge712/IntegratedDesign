@@ -1,0 +1,14 @@
+{
+  "input_dir": "data/calib/lab9_synthetic",
+  "image_glob": "calib_*.png",
+  "validation_glob": "validation/validation_*.png",
+  "cols": 9,
+  "rows": 7,
+  "square_size_mm": 25.0,
+  "min_views": 15,
+  "max_rms": 0.5,
+  "min_pitch_span_deg": 30.0,
+  "min_yaw_span_deg": 30.0,
+  "min_board_fraction": 0.30,
+  "camera_id": null
+}

@@ -79,3 +79,16 @@ AC-07 分开评价“代码已实测”和“用户个人素材已实测”：�
 | L8-FR-06 | 可通过配置/CLI换图，输入不变，成功后只留最新，失败保留旧结果 | 输入哈希、换图集成及LatestRun回滚测试 |
 
 图片要求同场景、重叠充分，指导书≥30°拍摄条件由本人据真实来源/拍摄记录核对，不由算法伪证。一般场景的视差和动态差异如实分析，不将羽化说成任意几何修复。技术完成不等于真实M1、个人截图/报告信息或提交完成。完整映射见lab8_m1_review.md。
+
+## 实验九增量需求 9.0.0
+
+| 编号 | 行为与验收 | 模块/证据 |
+| --- | --- | --- |
+| L9-FR-01 | ≥15张可用同相机/同尺寸棋盘，记录排除不删源，9×7内角点 | prepare_lab9.py/calibration.py、collection.json、检测图 |
+| L9-FR-02 | findChessboardCorners+cornerSubPix，calibrateCamera无真值初值 | calibration.py、raw/refined NPZ、calib_result.json |
+| L9-FR-03 | 打印/存K、5系数dist、各图外参和RMS，姿态/面积验收 | run_lab9.py、per_view_metrics.csv、误差分布图 |
+| L9-FR-04 | undistort并量化直线度，独立验证图不参与K拟合 | 重新检测的验证图、TLS指标、去畸变对比 |
+| L9-FR-05 | 集成测试计划逐例输入/步骤/预期/实际和数据记录 | test_plan_l9.md、36项新测试及9项集成 |
+| L9-FR-06 | 命名明确、可换图、最新结果/失败回滚；results/K.npy与dist.npy | latest_runs.py、result_exports/load_calibration、JSON哈希 |
+
+本次用户明确授权程序生成棋盘格，合成20拟合+2独立图与真实手机标定分开记录。禁止把合成参数用于其他相机/尺寸；若课程额外限定实拍，保留user_tasks.md条件任务。旧需求编号保持含义，L10–L12未实现。

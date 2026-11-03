@@ -67,3 +67,9 @@ lab7_annotations的抽样按固定seed均匀无放回，标签数据ID绑定输�
 homography.py的estimate_homography(right,left,threshold=5.0,confidence=.995,max_iters=10000,seed=8)接收有限N×2对应点（至少4对非退化），返回右→左float64 H、OpenCV原始bool内点掩码和正向误差。工作图坐标与原图坐标分开记录，H_original=inv(S_left)H_work S_right。
 
 stitch_pair(image1,image2,H,max_pixels=20000000)严格接收uint8 BGR，不修改输入；返回完整画布hard/feather/overlay、右图warp、left_mask/right_mask/overlap、alpha和geometry。画布size=(W,H)，T补负坐标，右图TH；有效性由投影掩码判定，黑色像素有效。拒绝退化、无穷远线穿图、无重叠或超过资源上限；错误由一键入口转ERROR/非零。完整约束见lab8_design.md，不替代真实小组接口确认。
+
+## 实验九标定与参数导出接口
+
+calibration.py统一棋盘角点为float32 (N,1,2)，兼容OpenCV4/5返回差异。cols/rows为内角点，object_points按x列/y行、Z=0，square_size_mm定义t单位。calibrate_views接收同尺寸(W,H)及观察点，K/dist初值None，返回float64 K、dist=[k1,k2,p1,p2,k3]、每图rvec/tvec和按角点总数归一化的RMS，不将真值投影当检测结果。
+
+results/K.npy和dist.npy与calib_result.json为兼容入口；load_calibration(folder,expected_camera_id,expected_size)必须校验来源、尺寸和数组哈希，allow_pickle=False。当前camera_id=lab9_synthetic_v1_seed9、尺寸1280×960，不能直接用于实验七八照片。板法线角覆盖、TLS直线度、真实换图边界及三文件/目录回滚见lab9_design.md；技术接口不替代真实小组确认。
