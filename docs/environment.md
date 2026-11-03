@@ -4,8 +4,8 @@
 
 | 项目 | 实际值 |
 | --- | --- |
-| recorded_at | 2026-11-02T20:01:36+08:00 |
-| program_version | 8.0.0 |
+| recorded_at | 2026-11-03T19:46:01+08:00 |
+| program_version | 9.0.0 |
 | platform | Windows-11-10.0.26200-SP0 |
 | machine | AMD64 |
 | python | 3.14.7 |

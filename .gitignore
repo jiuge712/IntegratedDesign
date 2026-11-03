@@ -11,4 +11,6 @@ evidence/*
 deliverables/*
 data/annotations/*
 !data/annotations/.gitkeep
+data/calib/
+results/
 

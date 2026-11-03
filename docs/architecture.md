@@ -56,3 +56,9 @@ matching.py实现两组SIFT的BF/FLANN KNN、ratio和最近邻互查/双向ratio
 原“几何”设计节点现增加二维分支：features.py→matching.py→homography.py（右→左RANSAC H）→warp完整画布/羽化→报告与证据。run_lab8.py提供加载/工作尺寸与latest边界，demo_m1.py复用同一链路；不重跑或覆盖一至七结果。
 
 这只实现二维单应模型和拼接，原设计中的相机K/R/t、轨迹、三角化及点云仍未实现；不能从H直接宣称完成三维重建。默认工作长边2400，源→工作矩阵及原图H另存，原图不改；完整接口/测试见lab8_design.md。
+
+## 实验九相机标定分支
+
+prepare_lab9.py（授权合成源图）或用户同相机实拍→calibration.detect_board→calibrate_views→内外参/误差→undistort与直线度→LatestRun及results兼容导出。run_lab9.py管理集合、配置、来源、验收、测试计划和报告；lab9_calib.py为指导书入口别名。9.0.0新增K/dist与每图板外参，仍不是实验十对极几何、实验十一PnP重建或点云；合成板标定结果不得用于其他相机照片。
+
+原有SIFT/匹配/二维H分支和一至八结果保持。当前生成真值只用于渲染与求解后的独立比较，不输入求解器；正式角点来自实际PNG检测。单元、独立图及来源/尺寸校验共同建立后续数据契约，见lab9_design.md和test_plan_l9.md。

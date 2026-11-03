@@ -1,12 +1,12 @@
 # 各实验统一复现指南
 
-本文件是固定的复现入口，目前覆盖实验一至八的技术复现。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。实验七人工误配率待真实标签补齐，不将程序完成等同课堂活动完成。
+本文件是固定的复现入口，目前覆盖实验一至九的技术复现。后续每完成一个实验，都增加对应指导，并同步更新 image_requirements.md。维护规则已写入项目 AGENTS.md，两个入口沿用原文件名。需要你本人参与的任务见 user_tasks.md；未明确告知已完成的任务继续保持未完成。实验七人工误配率待真实标签补齐，不将程序完成等同课堂活动完成。
 
 实验八已根据本次提供的eight-v6-1/2恢复并完成技术链路；默认1740/1944内点（89.51%），拼接和羽化图已生成。真实M1及来源/角度确认仍待本人，见实验八章节和user_tasks.md。
 
 图片由你提供；格式、尺寸、亮度、Alpha 和噪声派生版本记录来源与参数。实验五棋盘已获你明确授权由程序绘制，作为正式素材并记录来源。每个实验的个人输出与证据只保留最新一次完整运行，原始输入保留。
 
-当前全项目回归为224项主用例和15项子用例；旧章节的107/147/187等全套数量描述当时版本，新增实验后运行全套会增加，各实验独立测试数量保持不变。
+当前全项目回归为260项主用例和15项子用例；旧章节的107/147/187等全套数量描述当时版本，新增实验后运行全套会增加，各实验独立测试数量保持不变。
 
 ## 共同环境与安装
 
@@ -45,6 +45,7 @@ py -3.14 -m venv .venv
 | 六 SIFT提取与描述 | config/lab6_images.json | src/run_lab6.py | docs/lab6_report.md | data/output/lab6_latest |
 | 七 特征匹配与误配分析 | config/lab7_images.json | src/run_lab7.py | docs/lab7_report.md | data/output/lab7_latest |
 | 八 RANSAC与图像拼接 | config/lab8_images.json | src/run_lab8.py / src/demo_m1.py | docs/lab8_report.md | data/output/lab8_latest |
+| 九 标定与去畸变 | config/lab9_images.json | src/prepare_lab9.py → src/run_lab9.py | docs/lab9_report.md、test_plan_l9.md | data/output/lab9_latest；results兼容导出 |
 
 对应证据为 evidence/labN_latest。图片放在 data/input，不能放入 data/output、docs 或 evidence。JSON和一键二至八的图片覆盖相对路径按project_i根目录解释。实验一单张工具按当前工作目录解释，建议始终先Set-Location。人工持久CSV放data/annotations，避免latest替换清理。
 
@@ -314,15 +315,51 @@ run_lab8.py与demo_m1.py执行同一完整链路；演示入口在末尾另打�
 
 建筑、岸线、塔尖在本次视觉复核中基本连续，水面浮冰/反射有局部差异；羽化减弱亮度接缝，不保证修复动态变化或所有视差。≥30°不能由未标定照片自动证实。正式报告lab8_report.md、设计lab8_design.md、M1五分钟安排/追溯及真实评审空表lab8_m1_review.md已提供。本人复现、真实终端截图、素材来源/角度、现场演示和评分见user_tasks.md；这些不能由代理自动勾选。Git状态见lab8_git_workflow.md；源码ZIP不含原图、结果、证据或Git历史，课程要求这些材料另交，个人文档修改后重新package_lab8.py。
 
+## 实验九复现
+
+本次已按用户授权生成合成棋盘，而非下载或冒充手机实拍。20张1280×960、uint8拟合图和2张独立图位于data/calib/lab9_synthetic；9×7=63内角点、10×8格，虚拟方格25mm。源码ZIP不含图，换机器先生成即可复现，旧实验五chess.png保持。
+
+```powershell
+Set-Location D:\IntegratedDesign\project_i
+.\.venv\Scripts\python.exe -X utf8 src/prepare_lab9.py
+.\.venv\Scripts\python.exe -X utf8 -m pytest -v src/test_lab9.py --basetemp=.tmp/pytest_lab9_manual -o cache_dir=.tmp/pytest_lab9_manual_cache
+.\.venv\Scripts\python.exe -X utf8 src/run_lab9.py
+$LASTEXITCODE
+.\.venv\Scripts\python.exe -X utf8 src/package_lab9.py
+```
+
+指导书同名入口src/lab9_calib.py与run_lab9.py相同。生成器固定seed=9，重复执行仅在全部源文件/参数哈希一致时复用，拒绝覆盖已变素材；--output-dir仅允许data/calib内独立子目录。真正换新生成集用新子目录并更新九配置，原源图不删。
+
+36项新增测试，全项目260项主用例+15项子用例，13项实际验收和9项换图/损坏图筛除/失败保留集成检查通过；输出27张PNG。正式入口自动跑完整pytest，显式使用项目.tmp/pytest_lab9及.tmp/pytest_lab9_cache；手工命令使用独立_manual目录。pytest会清空basetemp，只放专用临时文件，不放原图/截图，也不并发共用。
+
+20/20张成功，每图63点；findChessboardCorners后cornerSubPix(11,11)、40次/0.001，calibrateCamera不传真值初始K。原角点RMS0.079415px，经本次精化RMS0.046396px；俯仰/偏航板法线跨度49.10°/57.05°，外轮廓近似面积最小34.00%。平均角点TLS直线度0.718925→0.029302px；两张未拟合图RMS0.053198/0.038651px，去畸变像素图重检直线度0.030281/0.024671px。高阶k3等可受参数耦合影响，不因低RMS宣称所有系数精确。
+
+本次K约为fx=1099.9574、fy=1119.9486、cx=643.1826、cy=476.7308，单位像素；dist顺序[k1,k2,p1,p2,k3]，详见lab9_report.md。camera_id=lab9_synthetic_v1_seed9，physical_camera_calibrated=false。**这些参数仅针对1280×960合成相机，不能套到实验七/八照片或你的手机。** 同镜头实拍/焦段/分辨率条件需要真实数据，若教师额外要求按user_tasks.md条件任务处理，当前不需为程序补图。
+
+换为自己的棋盘序列无需改源码，复制config/lab9_images.json为新配置，改input_dir、image_glob（如*.jpg）、cols/rows（内角点数）、square_size_mm（实际量测）及camera_id。单纯--input-dir也可覆盖目录，但其他规格和文件模式仍以配置为准：
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 src/run_lab9.py --config "config/我的标定配置.json"
+.\.venv\Scripts\python.exe -X utf8 src/lab9_calib.py --input-dir "data/calib/我的同相机照片"
+```
+
+真实图片需15–20张同一相机、焦段和分辨率的清晰平面棋盘，俯仰/偏航覆盖各≥30°，板占比≥30%，完整入画、不反光。生成模板打印后必须实际量测格长，不把虚拟25mm当打印尺寸。无独立验证图可将validation_glob设null；不应把拟合图重复当独立图。输入为uint8灰度/BGR/BGRA（丢Alpha），不隐式缩放不同尺寸；不能把输出/evidence/results/docs当持久输入。损坏/未检出只记录排除，少于15可用、混合尺寸、重复图片、低角度/面积、过高RMS或陈旧生成清单会失败并保留旧结果。近零畸变直线度允许明确的小数值波动，详见设计和测试计划。
+
+最新正式结果data/output/lab9_latest含calib_detect_01..20.png、l9_detection_overview.png、l9_undistort_compare.png、l9_validation_compare.png、误差分布与姿态图，以及K.npy/dist.npy/calib_result.json；失败图与使用索引在evidence/lab9_latest/collection.json，per_view_metrics.csv含每图RMS/面积/姿态/直线度，corners_and_poses.npz用allow_pickle=False读取。test_plan_l9.md每例有输入/步骤/预期/实际和数据记录，报告含raw→refined RMS对照。
+
+指导书要求的results/K.npy、results/dist.npy和results/calib_result.json也同步，只保留该三文件的最新版本，其他results文件不删。读取请从src导入calibration.load_calibration，并传expected_camera_id和expected_size，校验来源/尺寸/SHA后再用；NPY不能独立证明“同一相机”。导出JSON最后提交，有发布失败回滚；不能在更新中间态忽略哈希强读。原片、生成源、其他实验/标签不清理。
+
+课程提交内容见user_tasks.md；个人信息、真实截图/本人复现/提交状态未自动完成。源码包不含源图、输出、results导出或证据，若课程需要另交这些目录。生成和运行后补自己的材料再package_lab9.py。Git状态见lab9_git_workflow.md。
+
 ## 同一新图片用于各实验
 
-八个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改JSON；七、八各需两个适合自身任务的重叠场景图片，用各自--image1/--image2。四的真实光照不均图用--uneven，五的棋盘用--chess。单张纹理图不能自动代替棋盘或真实双视角对。无需改源码。
+九个配置独立。prepare_inputs.py **只更新images.json，不自动替换其他实验**。使用同一新源图时，准备实验一角色，再分别用二--normal、三--input、四--texture、五--texture、六--input或同步改JSON；七、八各需两个适合自身任务的重叠场景图片，用各自--image1/--image2。四的真实光照不均图用--uneven，五的棋盘用--chess。九使用独立棋盘序列目录和规格，不沿用一张纹理图或实验五的单棋盘；通过九配置/--input-dir更换。单张纹理图不能自动代替棋盘序列或真实双视角对。无需改源码。
 
 JSON绝对路径推荐 D:/MyImages/photo.jpg；反斜杠要转义。命令含空格、中文路径用双引号。保持对应角色的格式、通道和尺寸要求即可重复替换。
 
 ## 输出保留、排错与提交
 
-各实验只留lab1_latest至lab8_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图、派生输入及data/annotations中的人工CSV保留，其他实验最新结果不受影响。自动数组自检独立记录。
+各实验只留lab1_latest至lab9_latest的最新完整个人结果和证据。新运行在临时目录完成校验后替换旧结果，失败保留此前完整结果；原图、派生输入及data/annotations中的人工CSV保留，其他实验最新结果不受影响。自动数组自检独立记录。
 
 | 现象 | 处理 |
 | --- | --- |
